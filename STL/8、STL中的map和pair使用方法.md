@@ -1,0 +1,388 @@
+ 
+
+一、了解
+----
+
+`map`提供了 `key-value(键值对)`的存储机制，这使得map成为处理具有唯一键的关联数据的理想选择。`无重复值且有序`。
+
+*   map特性
+    *   键值对存储：每个键都有一个值对应。
+    *   自动排序：map`内部是平衡二叉搜索树（一般用红黑树）`。可以自动排序
+    *   元素具有唯一性：key对应唯一value
+    *   直接访问：用键key来访问值
+    *   灵活操作：有许多方便的操作
+*   map的时间复杂度
+    *   **插入操作**：**O(log n)**，其中n是std::map中元素的数量。这是因为需要在平衡二叉树中找到合适的位置来插入新元素。
+    *   **删除操作**：删除操作的时间复杂度同样为**O(log n)**，需要找到要删除的元素并在保持树平衡的同时移除它。
+    *   **查找操作**：查找操作的时间复杂度也是**O(log n)**，由于std::map的有序性，可以快速定位到任何键。
+    *   **遍历操作**：遍历std::map的时间复杂度为**O(n)**，因为需要访问容器中的每个元素。
+
+> *   ### 常见问题
+>     
+> *   ### 1、map和unordered\_map有什么区别？
+>     
+>     *   **内部实现**：map基于`红黑树`，元素**有序**；unordered\_map()基于`哈希表`元素**无序**。
+>     *   **性能**：对于map，查找、插入和删除操作的时间复杂度通常是O(log n)。对于unordered\_map，这些操作的平均时间复杂度是**O(1)**，但**最坏情况下是O(n)**。
+>     *   **内存消耗**：由于**哈希表的开销**，unordered\_map可能会比std::map消耗**更多内存**。
+>     *   **排序**：map中的元素按照键自动排序；unordered\_map中的元素没有排序。
+> *   ### 2、如何在map中用键key来查找值？
+>     
+>     *   find(key)函数可以返回迭代器。用它来访问。
+>     *   只要find返回的迭代器不等于 end（）就说明找到了。
+> *   ### 3、迭代器失效？
+>     
+>     *   删除时，被删除元素的迭代器会失效。【与list相同】
+>     *   插入时，不会失效。【与list相同】
+>     *   map是`双向迭代器`
+> *   ### 4、map：：emplace和map：：insert的区别？
+>     
+>     *   emplace直接构造元素。不会移动构造。
+>     *   insert需要移动构造，内存消耗大。
+
+*   使用map所需要的头文件
+
+```
+#include <map>
+```
+
+二、初始化
+-----
+
+### 1、pair的使用
+
+*   **pair头文件**
+
+```
+它的头文件是 
+#include< utility>
+```
+
+#### 1.1、构造pair
+
+*   构造pair<Type1 , Type2 >
+    *   `记住make_pair`的使用，这个经常用。
+
+```cpp
+int main(int argv,char* argc[]){
+    pair<string ,int>p1;
+    pair<string ,int>p2=p1;
+    pair<string ,int>p3(p2);
+    pair<string ,int>p4={"1",1};
+    pair<string ,int>p5=make_pair("1",1);
+}
+```
+
+#### 1.2、访问pair
+
+*   first(): 访问第一个
+*   second(): 访问第二个
+
+```cpp
+int main(int argv,char* argc[]){
+    pair<int ,int>p1{1,3};
+    cout<<p1.first<<endl;//1
+    cout<<p1.second<<endl;//3
+}
+```
+
+#### 1.3、pair交换操作
+
+*   swap（other\_pair）
+    *   当前pair与另一个pair交换
+
+```cpp
+int main(int argv,char* argc[]){
+    pair<int,int>p1{1,3};
+    pair<int,int> p2=make_pair(2,4);
+    p1.swap(p2);
+    cout<<p1.first<<endl;//2
+    cout<<p1.second<<endl;//4
+}
+```
+
+### 2、初始化map操作
+
+```
+map<KeyType, ValueType> myMap;
+键类型 KeyType：必须支持 < 运算符，或传入自定义比较函数。
+值类型 ValueType：任意类型（包括自定义类型）。
+```
+
+*   例子
+
+```cpp
+int main(int argv,char* argc[]){
+    pair<int,int>p1{1,3};
+    pair<int,int>p2{2,4};
+    map<int,int>map1;
+    map<int,int>map2=map1;
+    map<int,int>map3(map2);
+    map<int,int>map4={{1,3},{2,4}};//大括号来初始化
+    map<int,int>map5{{1,3},{2,4}};//大括号来初始化
+    map<int,int>map6={pair<int,int>(3,5)};//使用pair
+    map<int,int>map7={p1,p2};//使用pair
+}
+```
+
+*   如果我需要不同类型的排序
+    *   需要自己重载
+
+```cpp
+map<int, string> m1;                      // 键默认升序
+map<int, string, greater<int>> m2;        // 键降序排列
+
+// 自定义键类型的比较规则（假设 Key 是自定义类型）
+struct Key { int id; string name; };
+struct KeyCompare {
+    bool operator()(const Key& a, const Key& b) const {
+        return a.id < b.id || (a.id == b.id && a.name < b.name);
+    }
+};
+map<Key, string, KeyCompare> customMap;
+
+```
+
+三、函数使用
+------
+
+### 1、总结
+
+![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/2a1d3110d0884d469ec0b4c010341ad7.png#pic_center)
+
+### 2、例子
+
+#### 2.1、插入操作
+
+*   insert( key-value )
+    *   直接插入键值
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    map1.insert(pair<int,int>(3,4));
+    map1.insert({3,4});
+}
+```
+
+*   insert({初始化列表})
+    *   插入初始化列表
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    map1.insert({1,3});
+    for(auto i:map1){
+        cout<<i.first<<" "<<i.second<<" ";//1 2 2 3
+    }
+}
+```
+
+*   insert(other\_first , other\_end)
+    *   插入另一个map的范围值
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    map<int,int>map2={pair<int,int>(3,4),pair<int,int>(4,5)};
+    map1.insert(map2.begin(),map2.end());
+    for(auto i:map1){
+        cout<<i.first<<" "<<i.second<<" ";//1 2 2 3 3 4 4 5
+    }
+}
+```
+
+*   insert(pos , {key-value})
+    *   在pos的位置插入另一个键值，不一定是写成{key-value},也可以写成other\_map等等。
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    
+    map1.insert(map1.begin(),{1,2});
+    for(auto i:map1){
+        cout<<i.first<<" "<<i.second<<" ";//1 2 2 3
+    }
+}
+```
+
+*   \[ \]运算法
+    *   若键存在则修改值，若不存在则创建新元素。
+
+```cpp
+myMap[1] = "one";    // 插入键 1，值为 "one"
+myMap[2] = "two";    // 插入键 2，值为 "two"
+myMap[1] = "ONE";    // 更新键 1 的值为 "ONE"
+
+```
+
+*   emplace( )
+    *   避免临时对象构造，提高效率。
+
+```cpp
+myMap.emplace(5, "five");  // 直接构造 pair 对象
+
+```
+
+#### 2.2、删除操作
+
+*   erase(key)
+    *   删除键为key的值
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    map1.erase(1);
+    for(auto i:map1){
+        cout<<i.first<<" "<<i.second<<" ";//2 3
+    }
+}
+```
+
+*   erase(fist , end)
+    *   删除 在 first 到 end范围内的值
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    map1.erase(map1.begin(),--map1.end());
+    for(auto i:map1){
+        cout<<i.first<<" "<<i.second<<" ";//2 3
+    }
+}
+```
+
+#### 2.3、容量操作
+
+*   empty()
+    *   判断是否为空，为空返回 1，否则 0
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    if(map1.empty()){
+        cout<<"no values"<<endl;
+    }else{
+        cout<<"have values"<<endl;
+    }
+    //have values
+}
+```
+
+*   size( )
+    *   返回当前值的数量
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    cout<<map1.size();
+    //2
+}
+```
+
+#### 2.4、访问操作
+
+*   \[key\]运算法
+    *   返回key的值
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    cout<<map1[1];
+    //2
+}
+```
+
+*   at(key)
+    *   会提醒越界。返回key的值
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    cout<<map1.at(1);
+    //2
+}
+```
+
+*   迭代器
+    *   返回迭代器指针指向的节点
+    *   用first和second的获取键和值
+    *   节点包括\[key和value\]
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    auto i = map1.begin();
+    auto j = --map1.end();
+    cout<<i->second;//2
+    cout<<j->second;//3
+    
+}
+```
+
+#### 2.5、查找操作
+
+*   find(key)
+    *   返回指向键位置的迭代器，未找到返回 end()。
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    auto i = map1.find(1);
+    cout<<i->second;//2
+}
+```
+
+*   count()
+    *   返回键出现的次数（0 或 1）。
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    auto num = map1.count(1);
+    cout<<num;//1
+}
+```
+
+#### 2.6、lower\_bound和upper\_bound
+
+*   lower\_bound(key)
+    *   首个 >= key的迭代器
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    auto i = map1.lower_bound(1);
+    cout<<i->first;//1
+    cout<<i->second;//2
+}
+```
+
+*   upper\_bound(key)
+    *   首个 > key的迭代器
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    auto i = map1.upper_bound(1);
+    cout<<i->first;//2
+    cout<<i->second;//3
+}
+```
+
+#### 2.7、交换操作
+
+*   swap(other\_map)
+    *   交换两个 map
+
+```cpp
+int main(int argv,char* argc[]){
+    map<int,int>map1={pair<int,int>(1,2),pair<int,int>(2,3)};
+    map<int,int>map2={pair<int,int>(3,4)};
+    map1.swap(map2);
+    auto i = map1.begin();
+    cout<<i->first;//3
+    cout<<i->second;//4
+}
+```
+
+本文转自 <https://blog.csdn.net/2401_82911768/article/details/146291948?sharetype=blogdetail&sharerId=146291948&sharerefer=PC&sharesource=2401_82911768&spm=1011.2480.3001.8118>，如有侵权，请联系删除。
