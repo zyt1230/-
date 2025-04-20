@@ -291,4 +291,172 @@ Vector& operator=(const Vector &other){
     }
 ```
 
+### 11、完整过程
+
+```cpp
+#include<iostream>
+#include<string>
+#include<sstream>
+#include<algorithm>
+#include<stdexcept>
+using namespace std;
+template<class T>
+class Vector{
+public:
+    //构造函数
+    Vector():elements(nullptr),capacity(0),size(0){}
+    //拷贝构造函数
+    Vector(const Vector&other):capacity(other.capacity),size(other.size){
+        elements = new T[capacity];
+        copy(other.emlements,other.elements+size,elements);
+    }
+    //拷贝赋值函数
+    Vector& operator=(const Vector &other){
+        if(this!=&other){
+            delete[] elements;
+            capacity = other.capacity;
+            size = other.size;
+            elements = new T[capacity];
+            copy(other.elements,other.elements+size,elements);
+        }
+        return *this;
+    }
+    //析构函数
+    ~Vector(){
+        delete[] elements;
+    }
+    //添加元素到末尾
+    void push_back(const T&value){
+        if(size==capacity){
+            //扩容操作
+            reserve(capacity==0?1:2*capacity);
+        }
+        elements[size++] = value;
+    }
+    //指定位置插入元素insert
+    void insert(size_t index,const T&value){
+        if(index>=size){
+            throw out_of_range("index out of range");
+        }
+        if(size==capacity){
+            reserve(capacity==0?1:capacity*2);
+        }
+        for(size_t i =size;i>index;--i){
+            elements[i]=elements[i-1];
+        }
+        elements[index]=value;
+        ++size;
+    }   
+
+
+    //erase()删除某一个元素
+    T* erase(T* position){
+        if (position < begin() || position >= end()) {
+            throw std::out_of_range("Invalid erase position");
+        }
+        if(position!=end()){
+            copy(position+1,end(),position);   
+            --size; 
+        }
+        return position;
+    }
+
+    //删除末尾元素
+    void pop_back(){
+        if(size>0){
+            --size;
+        }
+    }
+    //容量
+    size_t getCapacity(){
+        return capacity;
+    }
+
+    //元素个数
+    size_t getSize()const{
+        return size;
+    }
+    //访问数组中的元素
+    T& operator[](size_t index){
+
+        if(index>=size){
+            throw out_of_range("index out of range");
+        }
+        return elements[index];
+    }
+    // const版本的访问数组中的元素
+    const T &operator[](size_t index) const
+    {
+        // 检查索引是否越界
+        if (index >= size)
+        {
+            throw std::out_of_range("Index out of range");
+        }
+        return elements[index];
+    }
+    //at访问
+    T at(int index){
+        if(index>=size){
+            throw out_of_range("vector at out of range");
+        }
+        return elements[index];
+    }
+    //at const访问
+    const T* at(int index)const{
+        if(index>=size){
+            throw out_of_range("vector at out of range");
+        }
+    }
+    //清空数组
+    void clear(){
+        
+        size=0;
+    }
+
+    //迭代器的实现
+    T*begin(){
+        return elements;
+    }
+
+    T*end(){
+        return elements+size;
+    }
+
+    //利用迭代器的打印数组
+    const T*begin()const{
+        return elements;
+    }
+
+    const T*end()const{
+        return elements+size;
+    }
+
+    //打印数组
+    void printElements()const{
+        for(size_t i =0;i<size;++i){
+            cout<<elements[i]<<" ";
+        }
+        cout<<endl;
+    }
+
+private:
+    //扩容操作
+    void reserve(size_t newCapacity){
+        if(newCapacity>capacity){
+            T* new_elements = new T[newCapacity];
+            copy(elements,elements+size,new_elements);
+            delete[] elements;
+            elements= new_elements;
+            capacity=newCapacity;
+        }
+    }
+private:
+    T* elements;//数组
+    size_t capacity;//数组容量
+    size_t size;//数组元素个数
+};
+
+
+```
+
 本文转自 <https://blog.csdn.net/2401_82911768/article/details/147144809?sharetype=blogdetail&sharerId=147144809&sharerefer=PC&sharesource=2401_82911768&spm=1011.2480.3001.8118>，如有侵权，请联系删除。
