@@ -108,7 +108,7 @@ unordered\_map、unordered\_multimap、 unordered\_set，unordered\_multiset这4
 #### 1、哈希环
 
 * 将节点和数据通过哈希函数映射到一个固定的范围（通常是一个环）。
-* 节点和数据的位置由哈希值决定。
+* 节点和数据的位置由哈希值决定
 
 #### 2、数据定位
 
@@ -153,7 +153,5 @@ unordered\_map、unordered\_multimap、 unordered\_set，unordered\_multiset这4
 ###### 容错性
 
 * 删除物理节点时，其虚拟节点对应的数据会迁移到其他物理节点，系统仍然保持平衡。
-
-
-
-
+  
+  
