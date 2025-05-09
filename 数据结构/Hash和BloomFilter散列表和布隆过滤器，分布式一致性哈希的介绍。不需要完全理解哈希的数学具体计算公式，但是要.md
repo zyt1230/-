@@ -60,7 +60,7 @@
 
 #### 2.1、STL中常使用的函数
 
-unordered\_map、unordered\_multimap、 unordered\_set，unordered\_multiset这4个都是用的散列表
+unordered\_map、unordered\_multimap、 unordered\_set，unordered\_multiset这4个都是用的散列表 。
 
 #### 2.2、实现原理
 
@@ -153,5 +153,3 @@ unordered\_map、unordered\_multimap、 unordered\_set，unordered\_multiset这4
 ###### 容错性
 
 * 删除物理节点时，其虚拟节点对应的数据会迁移到其他物理节点，系统仍然保持平衡。
-  
-  
